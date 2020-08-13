@@ -1,0 +1,443 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package vendingmachine;
+
+import java.util.Scanner;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+/**
+ *
+ * @author Jimmy Sergio Damiao
+ */
+
+public class VendingMachine {
+static Scanner sc = new Scanner (System.in);
+static Scanner landingPIn = new Scanner (System.in);
+static int options = 0;
+static int numItems = 0;
+static String[] name = new String[50];
+static double[] price = new double[50];
+static int[] quantity = new int [50];
+static int[] code = new int[50];
+static String itemName;
+static int itemCode;
+static int indexPos = 0;
+static boolean found = false;
+static String qty;
+static int totalQty = 0;
+static double totalPrice = 0;
+static double vat = totalPrice * 0.15;
+static double totalPriceAll = 0;
+static int newQty = 0;
+static double totalPriceVat = totalPrice + vat;
+static double amountTendered = 0;
+static double Change = 0;
+static int twoHundred, hundred, fifty, twenty, ten, five, one;
+static int fiftyC,tenC,fiveC;
+
+    public static void main(String[] args) {
+        landingPage();
+    }
+    
+    public static void landingPage (){
+        String owner = "KingCoal";
+        String ownerPassword = "SweetPxpx";
+        //Login information
+        
+        int a = 0;
+        //to initialize switch statement
+        
+        System.out.println("*           KingCoal's Vending Machine         *\n*"
+                + "          NUST, Office Building        *");
+        System.out.println("1. Owner Menu");
+        System.out.println("2. Customer Menu");
+        System.out.println("3. Quit");
+        
+        a = sc.nextInt();
+        
+        switch (a){
+            case 1:
+            {
+                System.out.println("Enter Username: ");
+                String name = sc.next();
+                
+                System.out.println("Enter Password: ");
+                String password = sc.next();
+                
+                if (name.equals(owner) && password.equals(ownerPassword)){
+                    ownerMenu(); //Verification process
+                }else{
+                    System.out.println("Wrong username or password");
+                    landingPage();
+                }//If password is correct, program will take the owner to the Owner Menu, if not, the program will not allow access.
+                break;
+            }
+            
+            case 2:
+            {
+               customerMenu();
+               //Proceed to customer menu
+            }
+            break;
+            
+            case 3:
+            {
+                System.exit(0);
+                //Exit program
+            }
+            
+            default:
+            {
+                System.out.println("Invalid Approach");
+                break;
+                //any other vslue added wont be allowed
+            }
+            
+        }
+        
+    }
+    
+    public static void ownerMenu(){
+
+        do{
+            System.out.println("*           KingCoal's Vending Machine         *");
+            System.out.println("1. New Items");
+            System.out.println("2. Restock");
+            System.out.println("3. Change Prices");
+            System.out.println("4. Items to Restock");
+            System.out.println("5. Summary of all items in stock");
+            System.out.println("6. Exit");
+            
+            options = sc.nextInt();
+            //to navigate through switch statement
+            
+            switch(options){
+                case 1:
+                {
+                    System.out.println("1. New Items");
+                    System.out.println("Amount of items: ");
+                    numItems = landingPIn.nextInt();
+                    
+                    for(int i = 0; i < numItems; i++){
+                        //for every int on amount of items, this look will ask for name, price quantity and code
+                        System.out.println((i + 1) + ". Enter item name, price, quantity and code: ");
+                        name [i] = landingPIn.next();
+                        price [i] = landingPIn.nextDouble();
+                        quantity [i] = landingPIn.nextInt();
+                        code [i] = landingPIn.nextInt();
+                    }
+                    
+                    //Items that were added are displayed in the following format
+                    System.out.println("******The following items were added******");
+                    System.out.println("[No.] \t [item name] \t [item price] \t [item quantity] \t [item code]");
+                    
+                    for(int i = 0; i < numItems; i++){
+                        System.out.println((i + 1) + " \t " + name[i] + " \t\t " + price[i] + "\t \t  " + quantity[i] + "\t\t" + code[i]);
+                    //display all items that were entered
+                    }
+                    
+                    System.out.println("******Items List******");
+                    break;
+                }
+                
+                case 2:
+                {
+                    int totalQty = 0;
+                    System.out.println("2. Restock");
+                    System.out.println("Enter item to  be restocked: ");//enter name of item that needs to be restocked
+                    itemName = landingPIn.next();
+                    
+                    for(int i = 0; i < numItems; i++){
+                        //for item name that was entered program will check to see if item exists
+                        if(itemName.equals(name[i]) && !(name[i].equals(""))){
+                            int lastQty = quantity[i];
+                            System.out.println("Enter new quantity: ");
+                            //adds new quantity to item that already exist
+                            int newQty = landingPIn.nextInt();
+                            totalQty = newQty + lastQty;
+                            quantity[i] = totalQty;
+                            //algorithm to add the old quantity to the new quanitity and add up as a total quanitity of items in stock
+                            found = true;
+                            //this process will only work if item exist. You use the boolean to check
+                        }
+                    }
+                    
+                        if (found == false){
+                            System.out.println("Invalid Approach: Inexistent Item");
+                            //If item does not exist
+                        }else{
+                            System.out.println("******Item Restocked******");
+                            System.out.println("[No.] \t [item name] \t [item price] \t [item quantity]");
+                            //Items that were restocked to be displayed in the following format
+                            for(int i = 0; i < numItems; i++){
+                                System.out.println((i + 1) + " \t " + name[i] + " \t\t " + price[i] + "\t \t  " + quantity[i]);
+                                //display all items that were restocked
+                            }
+                        }
+                        found = false;
+                        break;
+                }
+                
+                case 3:
+                {
+                    System.out.println("3. Change Price");
+                    System.out.println("Enter item name: ");
+                    itemName = landingPIn.next();//Enter item name to change its price
+                    double newPrice;
+                    
+                    for(int i = 0; i < numItems; i++){
+                        if(itemName.compareTo(name[i]) == 0){//checks if item already exists
+                            System.out.println((i + 1) + ". Enter new price: ");//new price that user wishes to add
+                            newPrice = landingPIn.nextDouble();
+                            price[i] = newPrice;//once added the new price saves to the array of the item 
+                            found = true;//this only applies if the item exist. Boolean checks this
+                        }
+                    }
+                    
+                    if (found == false){
+                        System.out.println("Item does not exist");//if item does not exist
+                    }
+                    System.out.println("******Item Price changed******");
+                    System.out.println("[No.]  \t [item name] \t [item price] \t [item quantity]");
+                    //Items that were restocked to be displayed in the following format
+                    for(int i = indexPos; i < numItems; i++){
+                        System.out.println((i + 1) + ". \t " + name[i] + " \t\t " + price[i] + " \t \t " + quantity[i]);
+                        i = numItems;
+                        //display all items that changed price
+                    }
+                    found = false;
+                    break;
+                }
+                
+                case 4:
+                {
+                    System.out.println("6. Items to Restock");
+                    System.out.println("[No.] \t[item name] \t [item price] \t [item quantity]");
+                    //displayed items in the following format
+                    for(int i = indexPos; i < numItems; i++){
+                        if(quantity[i] <= 25){
+                            System.out.println((i + 1) + ". \t " + name[i] + " \t\t" + price[i] + " \t\t " + quantity[i]);
+                        }//display all items with quantity that are below or equal to 25
+                    }
+                break;    
+                }
+                
+                case 5:
+                {
+                    System.out.println("7. Summary of items");
+                    System.out.println("[No.] \t[item name] \t [item price] \t [item quantity]");
+                    //displayed items in the following format
+                    for(int i = indexPos; i < numItems; i++){
+                        System.out.println((i + 1) + ". \t " + name[i] + " \t\t" + price[i] + " \t\t " + quantity[i]);
+                    }//Display all items in stock
+                 break;   
+                }
+                
+                case 6:
+                    landingPage();
+                    break;
+                    //Proceed back to landing page menu
+                default:
+                    break;
+            }
+            
+        }while(options != 6);
+    }
+    
+    public static void customerMenu(){
+        
+        System.out.println("\"[No.] \t [item Name] \t [item Price] \t [item Code] \"");
+        System.out.println("*************Plus Vat of 15% for each item**************");
+        //displayed items in the following format for cutomer to see item in stock and code
+        for(int i = indexPos; i < numItems; i++){
+            System.out.println((i + 1) + ". \t " + name[i] + " \t\t " + price[i] + " \t\t " + code[i]);
+        }//display items in stock
+        
+        System.out.println("Press [1] to buy items.");
+        System.out.println("Press [2] to exit Customer Menu.");
+        //options to menu
+        do{
+            
+        options = sc.nextInt();
+        //navigate through menu  
+        switch(options){
+            case 1:
+            {
+                System.out.println("How many items would you like to buy: ?");
+                numItems = sc.nextInt();
+                //amount of items user would like to buy
+                for(int i = 0; i < numItems; i++){
+                
+                System.out.println("Enter code: ");
+                itemCode = sc.nextInt();
+                //Enter code of  item user would  like to buy
+                    if(itemCode == code[i]){
+                        //if the code of the item exist, user can proceed onto next print prompt
+                        System.out.println("Quantity of item: ");
+                        quantity[i] = sc.nextInt();
+                        //quantity of item they'd like to buy
+                        //quantity of item should be within number of items user would  like to buy
+                        System.out.println("Amount: N$");
+                        amountTendered = sc.nextDouble();
+                        //Amount the customer or user is giving
+                            if(amountTendered <= totalPrice){
+                                System.out.println("Not enough money...");
+                                //the amount the user gives is not enough... the following would  print out
+                            }
+                    }else{
+                        System.out.println("Code does not exist!");
+                        //If code that was enetered does not exist, the following print is displayed
+                    }
+                }
+                reciept(name, price, quantity, totalPrice, amountTendered, Change);
+                //If all procedures are correect and as follows, the program for case one finally prints out the reciept
+            }
+            
+            case 2:
+            {
+                landingPage();
+                //Heads back to the landing page menu
+            }
+            
+            default:
+                break;
+        }
+        }while (options != 3);
+    }
+    
+    public static void reciept(String[] name, double[] price, int[] quantity, double totalPrice, double amountTendered, double Change){
+    
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        Date date = new Date();
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        Date time = new Date();
+        String curDate = dateFormat.format(date);
+        String curTime = timeFormat.format(time);
+        //declaration for date format to display in reciept
+        
+        System.out.println("***********************************");
+        System.out.println("*           KingCoal's Vending Machine         *\n*"
+                + "          NUST, Office Building        *");
+        System.out.println("***********************************");
+        
+        for(int i = 0; i < numItems; i++){
+        totalPrice = price[i] * quantity[i];
+        vat = totalPrice * 0.15;
+        double totalPriceVat = totalPrice + vat;
+        Change = amountTendered - totalPriceVat;
+        }//calculations on how the reciept will work
+        
+        System.out.println("Name\tQTY\tPrice\tTotal");
+        
+        for(int i = 0; i < numItems; i++){
+            System.out.println(name[i] + "\t" + quantity[i] + "\t" + price[i] + "\t" + (quantity[i] * price[i]));
+        }//displays and calculates for each item that was added by the customer when prompted for information
+        
+        String out = "";
+        
+        System.out.println("\tVat @15%\t" + vat);
+        System.out.println("Total\t\t\t" + totalPrice);
+        System.out.println("Tendered\t\t" + amountTendered);
+        System.out.println("Change\t\t\t" + Change);
+        System.out.println("************************************");
+        if (amountTendered >= totalPriceVat) {
+            if (amountTendered > totalPriceVat) {
+		System.out.println("Your change is: N$ " + String.format("%.2f", +Change));
+	    } else {
+		System.out.println("Your change is: N$ 0.00");
+	    }
+            System.out.print("Disbursed as follows: ");
+            if (Change >= 200.00) {
+                int twoHundred =(int) Change/200;
+                Change =(int) Change - twoHundred * 200;
+                out = twoHundred + " x N$ 200; ";
+                //System.out.print(out);
+            }
+            if (Change >= 100) {
+                int hundred = (int) Change/100;
+                Change = Change - (float) hundred * 100;
+                out = hundred + " x N$100; ";
+                //System.out.print(out);
+            } 
+            if (Change >= 50) {
+                int fifty = (int) Change/50;
+                Change = Change - (float) fifty * 50;
+                out = fifty + " x N$50; ";
+                //System.out.print(out);
+            }
+            if (Change >= 20) {
+                int twenty = (int) Change/20;
+                Change = Change - (float) twenty * 20;
+                out = twenty + " x N$20; ";
+                
+            }else {
+              System.out.print("0 x N$20; ");  
+            }
+            System.out.print(out);
+            if (Change >= 10) {
+                int ten = (int) Change/10;
+                Change = Change - (float) ten * 10;
+                out = ten + " x N$10; ";
+                System.out.print(out);
+            } else {
+              System.out.print("0 x N$10; ");  
+            }
+            if (Change >= 5) {
+                int five =(int) Change/5;
+                Change = Change - (float) five * 5;
+                out = five + " x N$5; ";
+                System.out.print(out);
+            }else {
+              System.out.print("0 x N$5; ");  
+            }
+            if (Change >= 1) {
+                //double onee = Change/1;
+                int one = (int) Change/1;
+                Change = Change - one * 1;
+                out = one + " x N$1; ";
+                System.out.print(out);
+            }else {
+              System.out.print("0 x N$1; ");  
+            }
+            //System.out.println("\n // "+change+" \\\\");
+            if (Change >= 0.5) {
+                double fiftyC = Change * 2;
+                Change = Change % 0.5;
+               //System.out.println("\n // "+change+" \\\\");
+                out = (int) fiftyC + " x 50c; ";
+                System.out.print(out);
+            }else {
+              System.out.print("0 x 50c; ");  
+            }
+            //System.out.println("\n // "+change+" \\\\");
+            if (Change >= 0.1){
+                tenC = (int) (Change * 10);
+                Change = Change % 10;
+                out = (int) tenC + " x 10c; ";
+                System.out.print(out);
+            }else {
+              System.out.print("0 x 10c; ");  
+            }
+            
+            if (Change >= 0.05) {
+                System.out.print("1 x 5c ");
+            }else {
+              System.out.print("0 x 5c ");  
+            }
+        
+        }else{
+            System.out.println("You'll need to pay more.");
+        }
+        System.out.println("Date:"+curDate +"\n" +"Time:"+curTime);
+        System.out.println("************************************");
+        System.out.println(" Thank you for shopping with us.");
+        System.out.println("_____________________________________");
+        System.out.println("  Exchange within 24hours only.");
+        System.out.println("   No refunds after 24 hours!");
+        System.out.println("_____________________________________");
+    }
+}
